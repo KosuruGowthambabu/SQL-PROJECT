@@ -1,4 +1,4 @@
-# SQL-PROJECT
+# SQL-PROJECT--- Online Book Store
 create database onlinebookstore;
 use onlinebookstore;
 show tables;
