@@ -264,58 +264,58 @@ SELECT * FROM Enrollments;
 
 SELECT * FROM Payments;
 
--- 2. Get only student names and emails
+-- 2. Get only student names and emails--->
 SELECT FullName, Email FROM Students;
 
--- 3. Get unique course durations
+-- 3. Get unique course durations--->
 SELECT DISTINCT DurationWeeks FROM Courses;
 
 -- 4. Get all courses with fees above 20,000
 SELECT * FROM Courses WHERE Fees > 20000;
 
--- 5. Sort instructors by name
+-- 5. Sort instructors by name--->
 SELECT * FROM Instructors ORDER BY Name;
 
 -- where Clause --->
 
--- 1. Students who registered in 2023
+-- 1. Students who registered in 2023--->
 SELECT * FROM Students WHERE YEAR(RegistrationDate) = 2023;
 
--- 2. Courses with duration >= 8 weeks
+-- 2. Courses with duration >= 8 weeks--->
 SELECT * FROM Courses WHERE DurationWeeks >= 8;
 
--- 3. Payments with status "Pending"
+-- 3. Payments with status "Pending"----->
 SELECT * FROM Payments WHERE PaymentStatus = 'Pending';
 
--- 4. Instructors with "AI & ML" expertise
+-- 4. Instructors with "AI & ML" expertise----->
 SELECT * FROM Instructors WHERE Expertise = 'AI & ML';
 
--- 5. Batches with time slot 'Evening'
+-- 5. Batches with time slot 'Evening'------>
 SELECT * FROM Batches WHERE TimeSlot = 'Evening';
 
 
 -- Joins --->
 
--- 1. Student names with enrolled course names
+-- 1. Student names with enrolled course names------>
 SELECT s.FullName, c.CourseName
 FROM Students s
 JOIN Enrollments e ON s.StudentID = e.StudentID
 JOIN Batches b ON e.BatchID = b.BatchID
 JOIN Courses c ON b.CourseID = c.CourseID;
 
--- 2. Payment status with student names
+-- 2. Payment status with student names---->
 SELECT s.FullName, p.AmountPaid, p.PaymentStatus
 FROM Students s
 JOIN Enrollments e ON s.StudentID = e.StudentID
 JOIN Payments p ON e.EnrollmentID = p.EnrollmentID;
 
--- 3. Instructors with their course names
+-- 3. Instructors with their course names------>
 SELECT i.Name, c.CourseName
 FROM Instructors i
 JOIN Batches b ON i.InstructorID = b.InstructorID
 JOIN Courses c ON b.CourseID = c.CourseID;
 
--- 4. Enrollments with course, instructor, student
+-- 4. Enrollments with course, instructor, student------>
 SELECT s.FullName, c.CourseName, i.Name AS Instructor
 FROM Enrollments e
 JOIN Students s ON s.StudentID = e.StudentID
@@ -323,7 +323,7 @@ JOIN Batches b ON b.BatchID = e.BatchID
 JOIN Courses c ON c.CourseID = b.CourseID
 JOIN Instructors i ON i.InstructorID = b.InstructorID;
 
--- 5. Students with payment details
+-- 5. Students with payment details------->
 SELECT s.FullName, p.AmountPaid, p.PaymentDate
 FROM Students s
 JOIN Enrollments e ON s.StudentID = e.StudentID
@@ -332,25 +332,25 @@ JOIN Payments p ON e.EnrollmentID = p.EnrollmentID;
 
 -- Group By + Aggergated Functions ---->
 
--- 1. Count students per year
+-- 1. Count students per year---->
 SELECT YEAR(RegistrationDate) AS Year, COUNT(*) AS Total
 FROM Students GROUP BY YEAR(RegistrationDate);
 
--- 2. Count enrollments per course
+-- 2. Count enrollments per course------>
 SELECT c.CourseName, COUNT(*) AS TotalEnrollments
 FROM Courses c
 JOIN Batches b ON c.CourseID = b.CourseID
 JOIN Enrollments e ON b.BatchID = e.BatchID
 GROUP BY c.CourseName;
 
--- 3. Sum of payments per status
+-- 3. Sum of payments per status----->
 SELECT PaymentStatus, SUM(AmountPaid) AS Total
 FROM Payments GROUP BY PaymentStatus;
 
--- 4. Average course fees
+-- 4. Average course fees------>
 SELECT AVG(Fees) AS AvgFee FROM Courses;
 
--- 5. Number of batches per instructor
+-- 5. Number of batches per instructor------>
 SELECT i.Name, COUNT(*) AS TotalBatches
 FROM Instructors i
 JOIN Batches b ON i.InstructorID = b.InstructorID
@@ -359,47 +359,47 @@ GROUP BY i.Name;
 
 -- Date Functions --->
 
--- 1. Students who registered this year
+-- 1. Students who registered this year----->
 SELECT * FROM Students WHERE YEAR(RegistrationDate) = YEAR(CURDATE());
 
--- 2. Payments made this month
+-- 2. Payments made this month----->
 SELECT * FROM Payments WHERE MONTH(PaymentDate) = MONTH(CURDATE());
 
--- 3. Difference in days between batch start and end
+-- 3. Difference in days between batch start and end------>
 SELECT BatchID, DATEDIFF(EndDate, StartDate) AS Duration
 FROM Batches;
 
--- 4. Extract month from payment date
+-- 4. Extract month from payment date----->
 SELECT PaymentID, MONTHNAME(PaymentDate) AS Month FROM Payments;
 
--- 5. Find batches starting in 2025
+-- 5. Find batches starting in 2025------>
 SELECT * FROM Batches WHERE YEAR(StartDate) = 2025;
 
 -- Sub Queries ---->
 
--- 1. Students who paid more than average
+-- 1. Students who paid more than average------->
 SELECT s.FullName, p.AmountPaid
 FROM Students s
 JOIN Enrollments e ON s.StudentID = e.StudentID
 JOIN Payments p ON p.EnrollmentID = e.EnrollmentID
 WHERE p.AmountPaid > (SELECT AVG(AmountPaid) FROM Payments);
 
--- 2. Courses with max duration
+-- 2. Courses with max duration------->
 SELECT * FROM Courses WHERE DurationWeeks = (
   SELECT MAX(DurationWeeks) FROM Courses
 );
 
--- 3. Instructors teaching more than 1 batch
+-- 3. Instructors teaching more than 1 batch------>
 SELECT Name FROM Instructors WHERE InstructorID IN (
   SELECT InstructorID FROM Batches GROUP BY InstructorID HAVING COUNT(*) > 1
 );
 
--- 4. Students with no enrollments
+-- 4. Students with no enrollments------->
 SELECT * FROM Students WHERE StudentID NOT IN (
   SELECT StudentID FROM Enrollments
 );
 
--- 5. Batches with no enrollments
+-- 5. Batches with no enrollments-------->
 SELECT * FROM Batches WHERE BatchID NOT IN (
   SELECT BatchID FROM Enrollments
 );
@@ -407,30 +407,30 @@ SELECT * FROM Batches WHERE BatchID NOT IN (
 
 -- Window Functions --->
 
--- 1. Rank students by payment amount
+-- 1. Rank students by payment amount------->
 SELECT s.FullName, p.AmountPaid,
        RANK() OVER (ORDER BY p.AmountPaid DESC) AS PaymentRank
 FROM Payments p
 JOIN Enrollments e ON p.EnrollmentID = e.EnrollmentID
 JOIN Students s ON s.StudentID = e.StudentID;
 
--- 2. Row number for each student
+-- 2. Row number for each student------->
 SELECT s.FullName, ROW_NUMBER() OVER (ORDER BY s.RegistrationDate) AS RowNum
 FROM Students s;
 
--- 3. Running total of payments
+-- 3. Running total of payments------->
 SELECT p.PaymentID, p.AmountPaid,
        SUM(p.AmountPaid) OVER (ORDER BY p.PaymentDate) AS RunningTotal
 FROM Payments p;
 
--- 4. Dense rank by payment amount
+-- 4. Dense rank by payment amount------>
 SELECT s.FullName, p.AmountPaid,
        DENSE_RANK() OVER (ORDER BY p.AmountPaid DESC) AS DenseRank
 FROM Students s
 JOIN Enrollments e ON s.StudentID = e.StudentID
 JOIN Payments p ON p.EnrollmentID = e.EnrollmentID;
 
--- 5. Average payment per student over all their enrollments
+-- 5. Average payment per student over all their enrollments------>
 SELECT s.FullName, AVG(p.AmountPaid) OVER (PARTITION BY s.StudentID) AS AvgPaid
 FROM Students s
 JOIN Enrollments e ON s.StudentID = e.StudentID
@@ -439,7 +439,7 @@ JOIN Payments p ON p.EnrollmentID = e.EnrollmentID;
 
 -- Case statements --->
 
--- 1. Label payment status
+-- 1. Label payment status------>
 SELECT AmountPaid,
   CASE
     WHEN PaymentStatus = 'Completed' THEN 'Paid'
@@ -447,7 +447,7 @@ SELECT AmountPaid,
   END AS StatusLabel
 FROM Payments;
 
--- 2. Grade payment levels
+-- 2. Grade payment levels------->
 SELECT FullName, AmountPaid,
   CASE 
     WHEN AmountPaid >= 40000 THEN 'High'
@@ -458,7 +458,7 @@ FROM Students s
 JOIN Enrollments e ON s.StudentID = e.StudentID
 JOIN Payments p ON p.EnrollmentID = e.EnrollmentID;
 
--- 3. Categorize students by registration year
+-- 3. Categorize students by registration year---->
 SELECT FullName,
   CASE 
     WHEN YEAR(RegistrationDate) < 2021 THEN 'Old'
@@ -467,7 +467,7 @@ SELECT FullName,
   END AS Category
 FROM Students;
 
--- 4. Show course cost category
+-- 4. Show course cost category------>
 SELECT CourseName, Fees,
   CASE
     WHEN Fees >= 40000 THEN 'Premium'
@@ -476,7 +476,7 @@ SELECT CourseName, Fees,
   END AS FeeLevel
 FROM Courses;
 
--- 5. Time slot description
+-- 5. Time slot description--------->
 SELECT BatchID, TimeSlot,
   CASE TimeSlot
     WHEN 'Morning' THEN '☀️ Morning Batch'
@@ -489,15 +489,15 @@ FROM Batches;
 -- Views ---->
 
 
--- 1. View of basic student info
+-- 1. View of basic student info-------->
 CREATE VIEW StudentBasicInfo AS
 SELECT FullName, Email, Phone FROM Students;
 
--- 2. View for high-fee courses
+-- 2. View for high-fee courses------>
 CREATE VIEW PremiumCourses AS
 SELECT CourseName, Fees FROM Courses WHERE Fees > 25000;
 
--- 3. View for enrollments with course and student info
+-- 3. View for enrollments with course and student info------->
 CREATE VIEW EnrollmentDetails AS
 SELECT e.EnrollmentID, s.FullName, c.CourseName
 FROM Enrollments e
@@ -505,7 +505,7 @@ JOIN Students s ON s.StudentID = e.StudentID
 JOIN Batches b ON e.BatchID = b.BatchID
 JOIN Courses c ON b.CourseID = c.CourseID;
 
--- 4. View to count enrollments per course
+-- 4. View to count enrollments per course------->
 CREATE VIEW CourseEnrollmentCount AS
 SELECT c.CourseName, COUNT(e.EnrollmentID) AS TotalEnrollments
 FROM Courses c
@@ -513,7 +513,7 @@ JOIN Batches b ON b.CourseID = c.CourseID
 JOIN Enrollments e ON e.BatchID = b.BatchID
 GROUP BY c.CourseName;
 
--- 5. View for pending payments
+-- 5. View for pending payments------->
 CREATE VIEW PendingPayments AS
 SELECT s.FullName, p.AmountPaid, p.PaymentStatus
 FROM Students s
@@ -524,7 +524,7 @@ WHERE p.PaymentStatus = 'Pending';
 
 -- Store Procedure --->
 
--- 1. Procedure to get student by ID
+-- 1. Procedure to get student by ID-------->
 DELIMITER //
 CREATE PROCEDURE GetStudent(IN id INT)
 BEGIN
@@ -533,7 +533,7 @@ END;
 //
 DELIMITER ;
 
--- 2. Procedure to list all courses above a fee threshold
+-- 2. Procedure to list all courses above a fee threshold------->
 DELIMITER //
 CREATE PROCEDURE CoursesAboveFee(IN fee DECIMAL(10,2))
 BEGIN
@@ -542,7 +542,7 @@ END;
 //
 DELIMITER ;
 
--- 3. Procedure to add a new instructor
+-- 3. Procedure to add a new instructor------->
 DELIMITER //
 CREATE PROCEDURE AddInstructor(IN name VARCHAR(100), IN email VARCHAR(100), IN expertise VARCHAR(100))
 BEGIN
@@ -552,7 +552,7 @@ END;
 //
 DELIMITER ;
 
--- 4. Procedure to count students per year
+-- 4. Procedure to count students per year--------->
 DELIMITER //
 CREATE PROCEDURE StudentCountByYear()
 BEGIN
@@ -563,7 +563,7 @@ END;
 //
 DELIMITER ;
 
--- 5. Procedure to update payment status
+-- 5. Procedure to update payment status-------->
 DELIMITER //
 CREATE PROCEDURE MarkPaymentCompleted(IN pid INT)
 BEGIN
@@ -576,38 +576,38 @@ DELIMITER ;
 -- Triggers --->
 
 
--- 1. Before insert trigger to set default payment status
+-- 1. Before insert trigger to set default payment status------->
 CREATE TRIGGER before_payment_insert
 BEFORE INSERT ON Payments
 FOR EACH ROW
 SET NEW.PaymentStatus = IFNULL(NEW.PaymentStatus, 'Pending');
 
--- 2. After insert trigger to log student insert
+-- 2. After insert trigger to log student insert------------>
 CREATE TRIGGER after_student_insert
 AFTER INSERT ON Students
 FOR EACH ROW
 INSERT INTO AuditLog(TableName, Action, ActionTime)
 VALUES ('Students', 'INSERT', NOW());
 
--- 3. Before insert trigger to prevent overpayment
--- CREATE TRIGGER prevent_overpayment
--- BEFORE INSERT ON Payments
--- FOR EACH ROW
--- BEGIN
---   IF NEW.AmountPaid > 50000 THEN
---       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Payment exceeds limit!';
---   END IF;
--- END;
+-- 3. Before insert trigger to prevent overpayment--------->
+ CREATE TRIGGER prevent_overpayment
+ BEFORE INSERT ON Payments
+FOR EACH ROW
+BEGIN
+IF NEW.AmountPaid > 50000 THEN
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Payment exceeds limit!';
+  END IF;
+END;
 
 
 
--- 4. After insert trigger to reduce batch capacity
+-- 4. After insert trigger to reduce batch capacity----->
 CREATE TRIGGER reduce_batch_capacity
 AFTER INSERT ON Enrollments
 FOR EACH ROW
 UPDATE Batches SET Capacity = Capacity - 1 WHERE BatchID = NEW.BatchID;
 
--- 5. After payment insert log
+-- 5. After payment insert log------->
 CREATE TRIGGER log_payment
 AFTER INSERT ON Payments
 FOR EACH ROW
@@ -620,54 +620,54 @@ DROP TRIGGER IF EXISTS log_payment;
 -- Transaction --->
 
 
--- 1. Insert payment with rollback support
+-- 1. Insert payment with rollback support------>
 START TRANSACTION;
 INSERT INTO Payments (EnrollmentID, AmountPaid, PaymentStatus, PaymentDate)
 VALUES (1, 20000, 'Pending', CURDATE());
 ROLLBACK;
 
--- 2. Update student email and commit
+-- 2. Update student email and commit------->
 START TRANSACTION;
 UPDATE Students SET Email = 'updated@example.com' WHERE StudentID = 1;
 COMMIT;
 
--- 3. Delete a batch and rollback
--- START TRANSACTION;
--- DELETE FROM Batches WHERE BatchID = 3;
--- ROLLBACK;
+-- 3. Delete a batch and rollback----->
+START TRANSACTION;
+ DELETE FROM Batches WHERE BatchID = 3;
+ ROLLBACK;
 ALTER TABLE Batches ADD Capacity INT DEFAULT 30;
 
--- 4. Enroll a student and update capacity
+-- 4. Enroll a student and update capacity------>
 START TRANSACTION;
 INSERT INTO Enrollments (StudentID, BatchID) VALUES (2, 4);
 UPDATE Batches SET Capacity = Capacity - 1 WHERE BatchID = 4;
 COMMIT;
 
--- 5. Add new student and auto-enroll
--- START TRANSACTION;
--- INSERT INTO Students (FullName, Email, Phone, RegistrationDate)
--- VALUES ('Ravi Kumar', 'ravi@example.com', '9998887776', CURDATE());
--- INSERT INTO Enrollments (StudentID, BatchID)
--- VALUES (LAST_INSERT_ID(), 2);
--- COMMIT;
+-- 5. Add new student and auto-enroll----->
+START TRANSACTION;
+INSERT INTO Students (FullName, Email, Phone, RegistrationDate)
+ VALUES ('Ravi Kumar', 'ravi@example.com', '9998887776', CURDATE());
+ INSERT INTO Enrollments (StudentID, BatchID)
+ VALUES (LAST_INSERT_ID(), 2);
+ COMMIT;
 
 
 -- Indexing ---->
 
 
--- 1. Index on student email
+-- 1. Index on student email------>
 CREATE INDEX idx_students_email ON Students(Email);
 
--- 2. Index on course name
+-- 2. Index on course name----->
 CREATE INDEX idx_courses_name ON Courses(CourseName);
 
--- 3. Index on payment status
+-- 3. Index on payment status------>
 CREATE INDEX idx_payments_status ON Payments(PaymentStatus);
 
--- 4. Index on batch time slot
+-- 4. Index on batch time slot------>
 CREATE INDEX idx_batches_timeslot ON Batches(TimeSlot);
 
--- 5. Unique index on instructor email
+-- 5. Unique index on instructor email----->
 CREATE UNIQUE INDEX idx_instructors_email ON Instructors(Name);
 
 
