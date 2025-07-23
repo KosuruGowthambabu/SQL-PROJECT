@@ -76,6 +76,7 @@ CREATE TABLE Payments (
 
 -- Inserting Students Details --->
 
+
 INSERT INTO Students (FullName, Email, Phone, RegistrationDate) VALUES ('Kosuru Saiteja', 
 'sai123@gmail.com', '1234567890', '2023-08-22 22:24:45');
 INSERT INTO Students (FullName, Email, Phone, RegistrationDate) VALUES ('Ravula Ajay',
@@ -251,7 +252,7 @@ INSERT INTO Payments (EnrollmentID, AmountPaid, PaymentDate, PaymentStatus)
 VALUES (20,50000, '2025-03-23 10:23:19', 'Completed');
 
 -- Select Query ----->
--- 1. Get all students
+-- 1. Get all students----->
 SELECT * FROM Students;
 
 SELECT * FROM Courses;
@@ -270,7 +271,7 @@ SELECT FullName, Email FROM Students;
 -- 3. Get unique course durations--->
 SELECT DISTINCT DurationWeeks FROM Courses;
 
--- 4. Get all courses with fees above 20,000
+-- 4. Get all courses with fees above 20,000----->
 SELECT * FROM Courses WHERE Fees > 20000;
 
 -- 5. Sort instructors by name--->
